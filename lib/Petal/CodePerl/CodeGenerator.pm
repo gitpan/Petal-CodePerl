@@ -3,8 +3,6 @@ use warnings;
 
 package Petal::CodePerl::CodeGenerator;
 
-BEGIN{ print "fergal - ".join("\n", @INC)."\n";};
-
 use Petal::CodeGenerator;
 our @ISA = qw( Petal::CodeGenerator );
 
@@ -18,6 +16,14 @@ use Data::Dumper qw(Dumper);
 
 # the root
 my $hash = scal("hash");
+
+# with the CodePerl code generator, we don't cache things so there's no need
+# to blow away the cache at every loop
+
+sub need_new_hash
+{
+	return 0;
+}
 
 sub comp_expr
 {

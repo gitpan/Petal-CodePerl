@@ -65,7 +65,7 @@ will give
 
         $hash->{"user"}->purchase($hash->{"cookie"}->{"basket"})
 
-    * you can do more complex defines, like the followiing
+    * you can do more complex defines, like the following
 
         petal:define="a{b}[1] string:hello"
 
@@ -91,8 +91,8 @@ MODIFIERS
     If you really need it, let me know.
 
   Partially Compiled
-    Partially comiled modifiers are easiest, in fact they are even easier than
-    Petal's original style. To partially compile a modifer, define a package
+    Partially compiled modifiers are easiest, in fact they are even easier than
+    Petal's original style. To partially compile a modifier, define a package
     with a "process_value()" method, and put that into %Petal::Hash::MODIFIERS
     just as you would with a normal modifier package.
 
@@ -111,7 +111,7 @@ MODIFIERS
       }
 
     This is a little different to the "process()" method originally used for
-    modifers. For a path like true:this/is/a/path, Petal would call "process()"
+    modifiers. For a path like true:this/is/a/path, Petal would call "process()"
     with 2 arguments - the Petal hash and the string "this/is/a/path", it was
     then up to the method to parse that string and find the value that it
     pointed to. For "process_value()", this string has already been parsed and
@@ -144,7 +144,7 @@ MODIFIERS
     value of the expression you are modifying, you get Code::Perl objects
     representing them, you then use these objects to construct another
     Code::Perl object which will eventually spit out the Perl code for your
-    modifier. It's not in the example above but if your modifier wants to acess
+    modifier. It's not in the example above but if your modifier wants to access
     the Petal hash please don't write '$hash->{blah}', instead write
     '%s->{blah}' and pass in the $hash_obj object. This allows for the
     possibility in the future that the hash is not called '$hash'.

@@ -1,3 +1,9 @@
+0.06
+
+added need_new_hash()
+
+fixed spelling in POD
+
 0.05
 
 Forgot to recompile the grammar in the last version, so inline modifiers

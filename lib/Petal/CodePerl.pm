@@ -3,7 +3,7 @@ use warnings;
 
 package Petal::CodePerl;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Petal;
 use Petal::CodePerl::Modifiers;
@@ -120,7 +120,7 @@ will give
 
 =item *
 
-you can do more complex defines, like the followiing
+you can do more complex defines, like the following
 
   petal:define="a{b}[1] string:hello"
 
@@ -152,8 +152,8 @@ it. If you really need it, let me know.
 
 =head2 Partially Compiled
 
-Partially comiled modifiers are easiest, in fact they are even easier than
-L<Petal>'s original style. To partially compile a modifer, define a package
+Partially compiled modifiers are easiest, in fact they are even easier than
+L<Petal>'s original style. To partially compile a modifier, define a package
 with a C<process_value()> method, and put that into
 C<%Petal::Hash::MODIFIERS> just as you would with a normal modifier package.
 
@@ -172,7 +172,7 @@ A simple example
   }
 
 This is a little different to the C<process()> method originally used for
-modifers. For a path like true:this/is/a/path, Petal would call C<process()>
+modifiers. For a path like true:this/is/a/path, Petal would call C<process()>
 with 2 arguments - the Petal hash and the string "this/is/a/path", it was
 then up to the method to parse that string and find the value that it
 pointed to. For C<process_value()>, this string has already been parsed and
@@ -206,7 +206,7 @@ The key points to note are that instead of getting the Petal hash and the
 value of the expression you are modifying, you get L<Code::Perl> objects
 representing them, you then use these objects to construct another
 L<Code::Perl> object which will eventually spit out the Perl code for your
-modifier. It's not in the example above but if your modifier wants to acess
+modifier. It's not in the example above but if your modifier wants to access
 the Petal hash please don't write '$hash->{blah}', instead write
 '%s->{blah}' and pass in the $hash_obj object. This allows for the
 possibility in the future that the hash is not called '$hash'.
