@@ -2,11 +2,21 @@ use strict;
 
 package Petal::CodePerl;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Petal;
 
 $Petal::CodeGenerator = 'Petal::CodePerl::CodeGenerator';
+
+use Scalar::Util;
+
+# we will need to access these routines from insides Petal's Safe
+# compartment
+
+*Petal::CPT::Petal::XML_Encode_Decode::encode = \&Petal::XML_Encode_Decode::encode;
+*Petal::CPT::Scalar::Util::blessed = \&Scalar::Util::blessed;
+*Petal::CPT::Scalar::Util::reftype = \&Scalar::Util::reftype;
+*Petal::CPT::UNIVERSAL::can = \&UNIVERSAL::can;
 
 1;
 

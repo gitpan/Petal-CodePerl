@@ -1,3 +1,8 @@
+0.03
+
+Moved the CPT modifications into Petal::CodePerl otherwise they're not done
+for cached scripts with Petal >= 0.95
+
 0.02
 
 using a precompiled Parse::RecDescent parser
