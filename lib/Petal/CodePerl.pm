@@ -3,7 +3,7 @@ use warnings;
 
 package Petal::CodePerl;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Petal;
 use Petal::CodePerl::Modifiers;

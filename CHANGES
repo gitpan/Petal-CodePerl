@@ -1,3 +1,9 @@
+0.05
+
+Forgot to recompile the grammar in the last version, so inline modifiers
+only worked when CODEPERL_DEV was set. Added a rule to Makefile.PL to
+recomile the grammar when the grammar file changes.
+
 0.04
 
 added support for compiled modifiers

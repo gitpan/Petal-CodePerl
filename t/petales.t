@@ -208,7 +208,19 @@ sub do_tests
 
 			my $comp = Petal::CodePerl::Compiler->compileRule($rule, $expr);
 
-			cmp_deeply($comp, $exp_comp, "$rule - $name") || diag Dumper($comp);
+			if (not cmp_deeply($comp, $exp_comp, "$rule - $name"))
+			{
+				my $perl = eval{$comp->perl};
+				if ($@)
+				{
+					diag "Couldn't make perl from comp, $@";
+				}
+				else
+				{
+					diag $perl;
+				}
+				diag Dumper($comp)
+			}
 		}
 	}
 }

@@ -20,10 +20,18 @@ WriteMakefile(
 		'Code::Perl' => '0.01',
 		'Test::Deep' => '0.02',
 		'Test::NoWarnings' => '0.03',
-		'Parse::RecDescent' => '0.02',
+		'Parse::RecDescent' => '1.80',
 		'Petal' => '0.95',
 	},
 	dist => {
-		PREOP=> "rm -f README; pod2text -80 < $pod_file > README; cp -f README $dir-\$(VERSION); "
+		PREOP=> "rm -f README; pod2text -80 < $pod_file > README; cp -f README $dir-\$(VERSION)"
 	}
 );
+
+sub MY::postamble
+{
+	return <<EOM;
+lib/Petal/CodePerl/Parser.pm: grammar
+	bin/buildparser
+EOM
+}

@@ -7454,9 +7454,15 @@ sub Parse::RecDescent::Petal::CodePerl::Parser::mod_expr_compile
 		$_tok = ($_noactions) ? 0 : do {
 
 			my $name = $item{mod_name};
+			my $expr = $item{expr};
 			my $mod = $Petal::Hash::MODIFIERS{"$name:"} || die "Modifier '$name' does not exists";
+
 			my $compiled;
-			if (UNIVERSAL::can($mod, "process_value"))
+			if (UNIVERSAL::can($mod, "inline") and $Petal::CodePerl::InlineMod)
+			{
+				$compiled =	$mod->inline($Petal::CodePerl::Compiler::root, $expr);
+			}
+			elsif (UNIVERSAL::can($mod, "process_value"))
 			{
 				$compiled =	Code::Perl::Expr::callm(
 					Code::Perl::Expr::scal("Petal::Hash::MODIFIERS{\"$name:\"}"), # this is a bit naughty
@@ -7760,7 +7766,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                      'implicit' => undef,
                                                                                                      'argcode' => undef,
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 124
+                                                                                                     'line' => 130
                                                                                                    }, 'Parse::RecDescent::Subrule' ),
                                                                                             bless( {
                                                                                                      'subrule' => 'url_segment',
@@ -7768,19 +7774,19 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                      'implicit' => undef,
                                                                                                      'argcode' => undef,
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 124
+                                                                                                     'line' => 130
                                                                                                    }, 'Parse::RecDescent::Subrule' ),
                                                                                             bless( {
                                                                                                      'pattern' => '()',
                                                                                                      'hashname' => '__STRING1__',
                                                                                                      'description' => '\'()\'',
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 124
+                                                                                                     'line' => 130
                                                                                                    }, 'Parse::RecDescent::Literal' ),
                                                                                             bless( {
                                                                                                      'hashname' => '__ACTION1__',
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 124,
+                                                                                                     'line' => 130,
                                                                                                      'code' => '{ [\'method\', $item{url_segment}] }'
                                                                                                    }, 'Parse::RecDescent::Action' )
                                                                                           ],
@@ -7790,7 +7796,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                          'name' => 'empty_method',
                                                          'vars' => '',
                                                          'changed' => 0,
-                                                         'line' => 124
+                                                         'line' => 130
                                                        }, 'Parse::RecDescent::Rule' ),
                               'mod_expr_revert' => bless( {
                                                             'impcount' => 0,
@@ -7814,7 +7820,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                         'implicit' => undef,
                                                                                                         'argcode' => undef,
                                                                                                         'lookahead' => 0,
-                                                                                                        'line' => 49
+                                                                                                        'line' => 55
                                                                                                       }, 'Parse::RecDescent::Subrule' ),
                                                                                                bless( {
                                                                                                         'description' => '/\\\\s*/',
@@ -7824,14 +7830,14 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                         'lookahead' => 0,
                                                                                                         'ldelim' => '/',
                                                                                                         'mod' => '',
-                                                                                                        'line' => 49
+                                                                                                        'line' => 55
                                                                                                       }, 'Parse::RecDescent::Token' ),
                                                                                                bless( {
                                                                                                         'pattern' => ':',
                                                                                                         'hashname' => '__STRING1__',
                                                                                                         'description' => '\':\'',
                                                                                                         'lookahead' => 0,
-                                                                                                        'line' => 49
+                                                                                                        'line' => 55
                                                                                                       }, 'Parse::RecDescent::Literal' ),
                                                                                                bless( {
                                                                                                         'description' => '/.*/',
@@ -7841,12 +7847,12 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                         'lookahead' => 0,
                                                                                                         'ldelim' => '/',
                                                                                                         'mod' => '',
-                                                                                                        'line' => 49
+                                                                                                        'line' => 55
                                                                                                       }, 'Parse::RecDescent::Token' ),
                                                                                                bless( {
                                                                                                         'hashname' => '__ACTION1__',
                                                                                                         'lookahead' => 0,
-                                                                                                        'line' => 49,
+                                                                                                        'line' => 55,
                                                                                                         'code' => '{
 
 			# make sure Petal doesn\'t escape it because we will
@@ -7866,7 +7872,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                             'name' => 'mod_expr_revert',
                                                             'vars' => '',
                                                             'changed' => 0,
-                                                            'line' => 48
+                                                            'line' => 54
                                                           }, 'Parse::RecDescent::Rule' ),
                               'string' => bless( {
                                                    'impcount' => 0,
@@ -7893,12 +7899,12 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                'matchrule' => 0,
                                                                                                'repspec' => 's?',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 143
+                                                                                               'line' => 149
                                                                                              }, 'Parse::RecDescent::Repetition' ),
                                                                                       bless( {
                                                                                                'hashname' => '__ACTION1__',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 143,
+                                                                                               'line' => 149,
                                                                                                'code' => '{
 			Code::Perl::Expr::append(@{$item[1]})
 		}'
@@ -7910,7 +7916,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                    'name' => 'string',
                                                    'vars' => '',
                                                    'changed' => 0,
-                                                   'line' => 142
+                                                   'line' => 148
                                                  }, 'Parse::RecDescent::Rule' ),
                               'path_expr' => bless( {
                                                       'impcount' => 0,
@@ -7988,7 +7994,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                                             'implicit' => undef,
                                                                                                                                             'argcode' => undef,
                                                                                                                                             'lookahead' => 0,
-                                                                                                                                            'line' => 163
+                                                                                                                                            'line' => 169
                                                                                                                                           }, 'Parse::RecDescent::Subrule' )
                                                                                                                                  ],
                                                                                                                       'line' => undef
@@ -8008,16 +8014,16 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                                             'implicit' => undef,
                                                                                                                                             'argcode' => undef,
                                                                                                                                             'lookahead' => 0,
-                                                                                                                                            'line' => 163
+                                                                                                                                            'line' => 169
                                                                                                                                           }, 'Parse::RecDescent::Subrule' )
                                                                                                                                  ],
-                                                                                                                      'line' => 163
+                                                                                                                      'line' => 169
                                                                                                                     }, 'Parse::RecDescent::Production' )
                                                                                                            ],
                                                                                                 'name' => '_alternation_1_of_production_1_of_rule_plain_string',
                                                                                                 'vars' => '',
                                                                                                 'changed' => 0,
-                                                                                                'line' => 163
+                                                                                                'line' => 169
                                                                                               }, 'Parse::RecDescent::Rule' ),
                               'single_expr' => bless( {
                                                         'impcount' => 0,
@@ -8095,7 +8101,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                 'lookahead' => 0,
                                                                                                 'ldelim' => '/',
                                                                                                 'mod' => '',
-                                                                                                'line' => 120
+                                                                                                'line' => 126
                                                                                               }, 'Parse::RecDescent::Token' )
                                                                                      ],
                                                                           'line' => undef
@@ -8104,7 +8110,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                     'name' => 'integer',
                                                     'vars' => '',
                                                     'changed' => 0,
-                                                    'line' => 120
+                                                    'line' => 126
                                                   }, 'Parse::RecDescent::Rule' ),
                               'mm_string' => bless( {
                                                       'impcount' => 0,
@@ -8125,7 +8131,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'hashname' => '__STRING1__',
                                                                                                   'description' => '\'--\'',
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 136
+                                                                                                  'line' => 142
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'description' => '/\\\\S+/',
@@ -8135,7 +8141,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'lookahead' => 0,
                                                                                                   'ldelim' => '/',
                                                                                                   'mod' => '',
-                                                                                                  'line' => 136
+                                                                                                  'line' => 142
                                                                                                 }, 'Parse::RecDescent::Token' )
                                                                                        ],
                                                                             'line' => undef
@@ -8144,7 +8150,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                       'name' => 'mm_string',
                                                       'vars' => '',
                                                       'changed' => 0,
-                                                      'line' => 136
+                                                      'line' => 142
                                                     }, 'Parse::RecDescent::Rule' ),
                               'qual_expr' => bless( {
                                                       'impcount' => 0,
@@ -8305,7 +8311,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                    'hashname' => '__STRING1__',
                                                                                                    'description' => '\'\\{\'',
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 116
+                                                                                                   'line' => 122
                                                                                                  }, 'Parse::RecDescent::Literal' ),
                                                                                           bless( {
                                                                                                    'subrule' => 'url_segment',
@@ -8313,19 +8319,19 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                    'implicit' => undef,
                                                                                                    'argcode' => undef,
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 116
+                                                                                                   'line' => 122
                                                                                                  }, 'Parse::RecDescent::Subrule' ),
                                                                                           bless( {
                                                                                                    'pattern' => '}',
                                                                                                    'hashname' => '__STRING2__',
                                                                                                    'description' => '\'\\}\'',
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 116
+                                                                                                   'line' => 122
                                                                                                  }, 'Parse::RecDescent::Literal' ),
                                                                                           bless( {
                                                                                                    'hashname' => '__ACTION1__',
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 116,
+                                                                                                   'line' => 122,
                                                                                                    'code' => '{ [\'hash\', $item{url_segment}] }'
                                                                                                  }, 'Parse::RecDescent::Action' )
                                                                                         ],
@@ -8335,7 +8341,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                        'name' => 'hash_deref',
                                                        'vars' => '',
                                                        'changed' => 0,
-                                                       'line' => 116
+                                                       'line' => 122
                                                      }, 'Parse::RecDescent::Rule' ),
                               'exists_expr' => bless( {
                                                         'impcount' => 0,
@@ -8409,12 +8415,12 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                'hashname' => '__STRING1__',
                                                                                                'description' => '\'$$\'',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 157
+                                                                                               'line' => 163
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'hashname' => '__ACTION1__',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 157,
+                                                                                               'line' => 163,
                                                                                                'code' => '{ \'$\' }'
                                                                                              }, 'Parse::RecDescent::Action' )
                                                                                     ],
@@ -8424,7 +8430,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                    'name' => 'dollar',
                                                    'vars' => '',
                                                    'changed' => 0,
-                                                   'line' => 157
+                                                   'line' => 163
                                                  }, 'Parse::RecDescent::Rule' ),
                               'deref' => bless( {
                                                   'impcount' => 0,
@@ -8451,7 +8457,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                               'implicit' => undef,
                                                                                               'argcode' => undef,
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 112
+                                                                                              'line' => 118
                                                                                             }, 'Parse::RecDescent::Subrule' )
                                                                                    ],
                                                                         'line' => undef
@@ -8471,10 +8477,10 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                               'implicit' => undef,
                                                                                               'argcode' => undef,
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 112
+                                                                                              'line' => 118
                                                                                             }, 'Parse::RecDescent::Subrule' )
                                                                                    ],
-                                                                        'line' => 112
+                                                                        'line' => 118
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
                                                                         'number' => '2',
@@ -8491,10 +8497,10 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                               'implicit' => undef,
                                                                                               'argcode' => undef,
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 112
+                                                                                              'line' => 118
                                                                                             }, 'Parse::RecDescent::Subrule' )
                                                                                    ],
-                                                                        'line' => 112
+                                                                        'line' => 118
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
                                                                         'number' => '3',
@@ -8511,16 +8517,16 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                               'implicit' => undef,
                                                                                               'argcode' => undef,
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 112
+                                                                                              'line' => 118
                                                                                             }, 'Parse::RecDescent::Subrule' )
                                                                                    ],
-                                                                        'line' => 112
+                                                                        'line' => 118
                                                                       }, 'Parse::RecDescent::Production' )
                                                              ],
                                                   'name' => 'deref',
                                                   'vars' => '',
                                                   'changed' => 0,
-                                                  'line' => 112
+                                                  'line' => 118
                                                 }, 'Parse::RecDescent::Rule' ),
                               'mod_expr' => bless( {
                                                      'impcount' => 0,
@@ -8598,12 +8604,12 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                         'implicit' => 'mm_string, or qq_string, or q_string',
                                                                                                         'argcode' => undef,
                                                                                                         'lookahead' => 0,
-                                                                                                        'line' => 132
+                                                                                                        'line' => 138
                                                                                                       }, 'Parse::RecDescent::Subrule' ),
                                                                                                bless( {
                                                                                                         'hashname' => '__ACTION1__',
                                                                                                         'lookahead' => 0,
-                                                                                                        'line' => 132,
+                                                                                                        'line' => 138,
                                                                                                         'code' => '{
 							Code::Perl::Expr::string($item[1])
 						}'
@@ -8615,7 +8621,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                             'name' => 'string_argument',
                                                             'vars' => '',
                                                             'changed' => 0,
-                                                            'line' => 132
+                                                            'line' => 138
                                                           }, 'Parse::RecDescent::Rule' ),
                               'arg_method' => bless( {
                                                        'impcount' => 0,
@@ -8642,7 +8648,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                    'implicit' => undef,
                                                                                                    'argcode' => undef,
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 126
+                                                                                                   'line' => 132
                                                                                                  }, 'Parse::RecDescent::Subrule' ),
                                                                                           bless( {
                                                                                                    'subrule' => 'url_segment',
@@ -8650,7 +8656,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                    'implicit' => undef,
                                                                                                    'argcode' => undef,
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 126
+                                                                                                   'line' => 132
                                                                                                  }, 'Parse::RecDescent::Subrule' ),
                                                                                           bless( {
                                                                                                    'description' => '/\\\\s+/',
@@ -8660,7 +8666,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                    'lookahead' => 0,
                                                                                                    'ldelim' => '/',
                                                                                                    'mod' => '',
-                                                                                                   'line' => 126
+                                                                                                   'line' => 132
                                                                                                  }, 'Parse::RecDescent::Token' ),
                                                                                           bless( {
                                                                                                    'expected' => '<leftop: argument /\\\\s+/ argument>',
@@ -8673,7 +8679,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                          'implicit' => undef,
                                                                                                                          'argcode' => undef,
                                                                                                                          'lookahead' => 0,
-                                                                                                                         'line' => 126
+                                                                                                                         'line' => 132
                                                                                                                        }, 'Parse::RecDescent::Subrule' ),
                                                                                                    'rightarg' => bless( {
                                                                                                                           'subrule' => 'argument',
@@ -8681,7 +8687,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                           'implicit' => undef,
                                                                                                                           'argcode' => undef,
                                                                                                                           'lookahead' => 0,
-                                                                                                                          'line' => 126
+                                                                                                                          'line' => 132
                                                                                                                         }, 'Parse::RecDescent::Subrule' ),
                                                                                                    'hashname' => '__DIRECTIVE1__',
                                                                                                    'type' => 'leftop',
@@ -8693,13 +8699,13 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                     'lookahead' => 0,
                                                                                                                     'ldelim' => '/',
                                                                                                                     'mod' => '',
-                                                                                                                    'line' => 126
+                                                                                                                    'line' => 132
                                                                                                                   }, 'Parse::RecDescent::Token' )
                                                                                                  }, 'Parse::RecDescent::Operator' ),
                                                                                           bless( {
                                                                                                    'hashname' => '__ACTION1__',
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 126,
+                                                                                                   'line' => 132,
                                                                                                    'code' => '{
 					[\'method\',  $item{url_segment}, @{$item[4]}]
 				}'
@@ -8711,7 +8717,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                        'name' => 'arg_method',
                                                        'vars' => '',
                                                        'changed' => 0,
-                                                       'line' => 126
+                                                       'line' => 132
                                                      }, 'Parse::RecDescent::Rule' ),
                               'non_dollar' => bless( {
                                                        'impcount' => 0,
@@ -8735,7 +8741,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                    'lookahead' => 0,
                                                                                                    'ldelim' => '/',
                                                                                                    'mod' => '',
-                                                                                                   'line' => 159
+                                                                                                   'line' => 165
                                                                                                  }, 'Parse::RecDescent::Token' )
                                                                                         ],
                                                                              'line' => undef
@@ -8744,7 +8750,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                        'name' => 'non_dollar',
                                                        'vars' => '',
                                                        'changed' => 0,
-                                                       'line' => 159
+                                                       'line' => 165
                                                      }, 'Parse::RecDescent::Rule' ),
                               'q_string' => bless( {
                                                      'impcount' => 0,
@@ -8765,7 +8771,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                  'hashname' => '__STRING1__',
                                                                                                  'description' => '\'\'\'',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 138
+                                                                                                 'line' => 144
                                                                                                }, 'Parse::RecDescent::InterpLit' ),
                                                                                         bless( {
                                                                                                  'description' => '/[^\']*/',
@@ -8775,19 +8781,19 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                  'lookahead' => 0,
                                                                                                  'ldelim' => '/',
                                                                                                  'mod' => '',
-                                                                                                 'line' => 138
+                                                                                                 'line' => 144
                                                                                                }, 'Parse::RecDescent::Token' ),
                                                                                         bless( {
                                                                                                  'pattern' => '\'',
                                                                                                  'hashname' => '__STRING2__',
                                                                                                  'description' => '\'\'\'',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 138
+                                                                                                 'line' => 144
                                                                                                }, 'Parse::RecDescent::InterpLit' ),
                                                                                         bless( {
                                                                                                  'hashname' => '__ACTION1__',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 138,
+                                                                                                 'line' => 144,
                                                                                                  'code' => '{ $item[2] }'
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
@@ -8797,7 +8803,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                      'name' => 'q_string',
                                                      'vars' => '',
                                                      'changed' => 0,
-                                                     'line' => 138
+                                                     'line' => 144
                                                    }, 'Parse::RecDescent::Rule' ),
                               'plain_string' => bless( {
                                                          'impcount' => 1,
@@ -8824,12 +8830,12 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                      'matchrule' => 0,
                                                                                                      'repspec' => 's',
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 153
+                                                                                                     'line' => 159
                                                                                                    }, 'Parse::RecDescent::Repetition' ),
                                                                                             bless( {
                                                                                                      'hashname' => '__ACTION1__',
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 153,
+                                                                                                     'line' => 159,
                                                                                                      'code' => '{
 					Code::Perl::Expr::string( join("", @{$item[1]}) )
 				}'
@@ -8841,7 +8847,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                          'name' => 'plain_string',
                                                          'vars' => '',
                                                          'changed' => 0,
-                                                         'line' => 152
+                                                         'line' => 158
                                                        }, 'Parse::RecDescent::Rule' ),
                               'not_expr' => bless( {
                                                      'impcount' => 0,
@@ -8919,7 +8925,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                     'hashname' => '__STRING1__',
                                                                                                     'description' => '\'[\'',
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 118
+                                                                                                    'line' => 124
                                                                                                   }, 'Parse::RecDescent::Literal' ),
                                                                                            bless( {
                                                                                                     'subrule' => 'integer',
@@ -8927,19 +8933,19 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                     'implicit' => undef,
                                                                                                     'argcode' => undef,
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 118
+                                                                                                    'line' => 124
                                                                                                   }, 'Parse::RecDescent::Subrule' ),
                                                                                            bless( {
                                                                                                     'pattern' => ']',
                                                                                                     'hashname' => '__STRING2__',
                                                                                                     'description' => '\']\'',
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 118
+                                                                                                    'line' => 124
                                                                                                   }, 'Parse::RecDescent::Literal' ),
                                                                                            bless( {
                                                                                                     'hashname' => '__ACTION1__',
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 118,
+                                                                                                    'line' => 124,
                                                                                                     'code' => '{ [\'array\', $item{integer}] }'
                                                                                                   }, 'Parse::RecDescent::Action' )
                                                                                          ],
@@ -8949,7 +8955,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                         'name' => 'array_deref',
                                                         'vars' => '',
                                                         'changed' => 0,
-                                                        'line' => 118
+                                                        'line' => 124
                                                       }, 'Parse::RecDescent::Rule' ),
                               'perl_expr' => bless( {
                                                       'impcount' => 0,
@@ -9025,7 +9031,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                  'implicit' => undef,
                                                                                                  'argcode' => undef,
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 130
+                                                                                                 'line' => 136
                                                                                                }, 'Parse::RecDescent::Subrule' )
                                                                                       ],
                                                                            'line' => undef
@@ -9045,16 +9051,16 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                  'implicit' => undef,
                                                                                                  'argcode' => undef,
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 130
+                                                                                                 'line' => 136
                                                                                                }, 'Parse::RecDescent::Subrule' )
                                                                                       ],
-                                                                           'line' => 130
+                                                                           'line' => 136
                                                                          }, 'Parse::RecDescent::Production' )
                                                                 ],
                                                      'name' => 'argument',
                                                      'vars' => '',
                                                      'changed' => 0,
-                                                     'line' => 130
+                                                     'line' => 136
                                                    }, 'Parse::RecDescent::Rule' ),
                               'qq_string' => bless( {
                                                       'impcount' => 0,
@@ -9075,7 +9081,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'hashname' => '__STRING1__',
                                                                                                   'description' => '\'"\'',
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 137
+                                                                                                  'line' => 143
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'description' => '/[^"]*/',
@@ -9085,19 +9091,19 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'lookahead' => 0,
                                                                                                   'ldelim' => '/',
                                                                                                   'mod' => '',
-                                                                                                  'line' => 137
+                                                                                                  'line' => 143
                                                                                                 }, 'Parse::RecDescent::Token' ),
                                                                                          bless( {
                                                                                                   'pattern' => '"',
                                                                                                   'hashname' => '__STRING2__',
                                                                                                   'description' => '\'"\'',
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 137
+                                                                                                  'line' => 143
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'hashname' => '__ACTION1__',
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 137,
+                                                                                                  'line' => 143,
                                                                                                   'code' => '{ $item[2] }'
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
@@ -9107,7 +9113,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                       'name' => 'qq_string',
                                                       'vars' => '',
                                                       'changed' => 0,
-                                                      'line' => 137
+                                                      'line' => 143
                                                     }, 'Parse::RecDescent::Rule' ),
                               'expr' => bless( {
                                                  'impcount' => 0,
@@ -9200,7 +9206,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                     'implicit' => undef,
                                                                                                     'argcode' => undef,
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 75
+                                                                                                    'line' => 81
                                                                                                   }, 'Parse::RecDescent::Subrule' ),
                                                                                            bless( {
                                                                                                     'subrule' => 'deref',
@@ -9211,12 +9217,12 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                     'matchrule' => 0,
                                                                                                     'repspec' => 's?',
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 75
+                                                                                                    'line' => 81
                                                                                                   }, 'Parse::RecDescent::Repetition' ),
                                                                                            bless( {
                                                                                                     'hashname' => '__ACTION1__',
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 75,
+                                                                                                    'line' => 81,
                                                                                                     'code' => '{
 
 		my $current = Code::Perl::Expr::derefh($Petal::CodePerl::Compiler::root, $item{url_segment});
@@ -9257,7 +9263,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                         'name' => 'single_path',
                                                         'vars' => '',
                                                         'changed' => 0,
-                                                        'line' => 73
+                                                        'line' => 79
                                                       }, 'Parse::RecDescent::Rule' ),
                               'string_expr' => bless( {
                                                         'impcount' => 0,
@@ -9333,7 +9339,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                'hashname' => '__STRING1__',
                                                                                                'description' => '\'$\'',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 150
+                                                                                               'line' => 156
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'subrule' => 'single_path',
@@ -9341,7 +9347,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                'implicit' => undef,
                                                                                                'argcode' => undef,
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 150
+                                                                                               'line' => 156
                                                                                              }, 'Parse::RecDescent::Subrule' )
                                                                                     ],
                                                                          'line' => undef
@@ -9360,7 +9366,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                'hashname' => '__STRING1__',
                                                                                                'description' => '\'$\\{\'',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 150
+                                                                                               'line' => 156
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'subrule' => 'single_path',
@@ -9368,29 +9374,29 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                'implicit' => undef,
                                                                                                'argcode' => undef,
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 150
+                                                                                               'line' => 156
                                                                                              }, 'Parse::RecDescent::Subrule' ),
                                                                                       bless( {
                                                                                                'pattern' => '}',
                                                                                                'hashname' => '__STRING2__',
                                                                                                'description' => '\'\\}\'',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 150
+                                                                                               'line' => 156
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'hashname' => '__ACTION1__',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 150,
+                                                                                               'line' => 156,
                                                                                                'code' => '{ $item{single_path} }'
                                                                                              }, 'Parse::RecDescent::Action' )
                                                                                     ],
-                                                                         'line' => 150
+                                                                         'line' => 156
                                                                        }, 'Parse::RecDescent::Production' )
                                                               ],
                                                    'name' => 'varsub',
                                                    'vars' => '',
                                                    'changed' => 0,
-                                                   'line' => 150
+                                                   'line' => 156
                                                  }, 'Parse::RecDescent::Rule' ),
                               'method_call' => bless( {
                                                         'impcount' => 0,
@@ -9415,7 +9421,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                     'implicit' => undef,
                                                                                                     'argcode' => undef,
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 122
+                                                                                                    'line' => 128
                                                                                                   }, 'Parse::RecDescent::Subrule' )
                                                                                          ],
                                                                               'line' => undef
@@ -9435,16 +9441,16 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                     'implicit' => undef,
                                                                                                     'argcode' => undef,
                                                                                                     'lookahead' => 0,
-                                                                                                    'line' => 122
+                                                                                                    'line' => 128
                                                                                                   }, 'Parse::RecDescent::Subrule' )
                                                                                          ],
-                                                                              'line' => 122
+                                                                              'line' => 128
                                                                             }, 'Parse::RecDescent::Production' )
                                                                    ],
                                                         'name' => 'method_call',
                                                         'vars' => '',
                                                         'changed' => 0,
-                                                        'line' => 122
+                                                        'line' => 128
                                                       }, 'Parse::RecDescent::Rule' ),
                               'url_segment' => bless( {
                                                         'impcount' => 0,
@@ -9468,7 +9474,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                     'lookahead' => 0,
                                                                                                     'ldelim' => '/',
                                                                                                     'mod' => 'i',
-                                                                                                    'line' => 108
+                                                                                                    'line' => 114
                                                                                                   }, 'Parse::RecDescent::Token' )
                                                                                          ],
                                                                               'line' => undef
@@ -9477,7 +9483,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                         'name' => 'url_segment',
                                                         'vars' => '',
                                                         'changed' => 0,
-                                                        'line' => 108
+                                                        'line' => 114
                                                       }, 'Parse::RecDescent::Rule' ),
                               '_alternation_1_of_production_1_of_rule_string_argument' => bless( {
                                                                                                    'impcount' => 0,
@@ -9503,7 +9509,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                                                'implicit' => undef,
                                                                                                                                                'argcode' => undef,
                                                                                                                                                'lookahead' => 0,
-                                                                                                                                               'line' => 163
+                                                                                                                                               'line' => 169
                                                                                                                                              }, 'Parse::RecDescent::Subrule' )
                                                                                                                                     ],
                                                                                                                          'line' => undef
@@ -9523,10 +9529,10 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                                                'implicit' => undef,
                                                                                                                                                'argcode' => undef,
                                                                                                                                                'lookahead' => 0,
-                                                                                                                                               'line' => 163
+                                                                                                                                               'line' => 169
                                                                                                                                              }, 'Parse::RecDescent::Subrule' )
                                                                                                                                     ],
-                                                                                                                         'line' => 163
+                                                                                                                         'line' => 169
                                                                                                                        }, 'Parse::RecDescent::Production' ),
                                                                                                                 bless( {
                                                                                                                          'number' => '2',
@@ -9543,16 +9549,16 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                                                                'implicit' => undef,
                                                                                                                                                'argcode' => undef,
                                                                                                                                                'lookahead' => 0,
-                                                                                                                                               'line' => 163
+                                                                                                                                               'line' => 169
                                                                                                                                              }, 'Parse::RecDescent::Subrule' )
                                                                                                                                     ],
-                                                                                                                         'line' => 163
+                                                                                                                         'line' => 169
                                                                                                                        }, 'Parse::RecDescent::Production' )
                                                                                                               ],
                                                                                                    'name' => '_alternation_1_of_production_1_of_rule_string_argument',
                                                                                                    'vars' => '',
                                                                                                    'changed' => 0,
-                                                                                                   'line' => 163
+                                                                                                   'line' => 169
                                                                                                  }, 'Parse::RecDescent::Rule' ),
                               'mod_name' => bless( {
                                                      'impcount' => 0,
@@ -9576,7 +9582,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                  'lookahead' => 0,
                                                                                                  'ldelim' => '/',
                                                                                                  'mod' => '',
-                                                                                                 'line' => 71
+                                                                                                 'line' => 77
                                                                                                }, 'Parse::RecDescent::Token' )
                                                                                       ],
                                                                            'line' => undef
@@ -9585,7 +9591,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                      'name' => 'mod_name',
                                                      'vars' => '',
                                                      'changed' => 0,
-                                                     'line' => 69
+                                                     'line' => 75
                                                    }, 'Parse::RecDescent::Rule' ),
                               'only_expr' => bless( {
                                                       'impcount' => 0,
@@ -9659,7 +9665,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'implicit' => undef,
                                                                                                   'argcode' => undef,
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 114
+                                                                                                  'line' => 120
                                                                                                 }, 'Parse::RecDescent::Subrule' ),
                                                                                          bless( {
                                                                                                   'subrule' => 'url_segment',
@@ -9667,12 +9673,12 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'implicit' => undef,
                                                                                                   'argcode' => undef,
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 114
+                                                                                                  'line' => 120
                                                                                                 }, 'Parse::RecDescent::Subrule' ),
                                                                                          bless( {
                                                                                                   'hashname' => '__ACTION1__',
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 114,
+                                                                                                  'line' => 120,
                                                                                                   'code' => '{ [\'tal\', $item{url_segment}] }'
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
@@ -9682,7 +9688,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                       'name' => 'tal_deref',
                                                       'vars' => '',
                                                       'changed' => 0,
-                                                      'line' => 114
+                                                      'line' => 120
                                                     }, 'Parse::RecDescent::Rule' ),
                               'separator' => bless( {
                                                       'impcount' => 0,
@@ -9703,7 +9709,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'hashname' => '__STRING1__',
                                                                                                   'description' => '\'/\'',
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 110
+                                                                                                  'line' => 116
                                                                                                 }, 'Parse::RecDescent::Literal' )
                                                                                        ],
                                                                             'line' => undef
@@ -9722,16 +9728,16 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                   'hashname' => '__STRING1__',
                                                                                                   'description' => '\'.\'',
                                                                                                   'lookahead' => 0,
-                                                                                                  'line' => 110
+                                                                                                  'line' => 116
                                                                                                 }, 'Parse::RecDescent::Literal' )
                                                                                        ],
-                                                                            'line' => 110
+                                                                            'line' => 116
                                                                           }, 'Parse::RecDescent::Production' )
                                                                  ],
                                                       'name' => 'separator',
                                                       'vars' => '',
                                                       'changed' => 0,
-                                                      'line' => 110
+                                                      'line' => 116
                                                     }, 'Parse::RecDescent::Rule' ),
                               'mod_expr_compile' => bless( {
                                                              'impcount' => 0,
@@ -9790,9 +9796,15 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                          'code' => '{
 
 			my $name = $item{mod_name};
+			my $expr = $item{expr};
 			my $mod = $Petal::Hash::MODIFIERS{"$name:"} || die "Modifier \'$name\' does not exists";
+
 			my $compiled;
-			if (UNIVERSAL::can($mod, "process_value"))
+			if (UNIVERSAL::can($mod, "inline") and $Petal::CodePerl::InlineMod)
+			{
+				$compiled =	$mod->inline($Petal::CodePerl::Compiler::root, $expr);
+			}
+			elsif (UNIVERSAL::can($mod, "process_value"))
 			{
 				$compiled =	Code::Perl::Expr::callm(
 					Code::Perl::Expr::scal("Petal::Hash::MODIFIERS{\\"$name:\\"}"), # this is a bit naughty
@@ -9836,7 +9848,7 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                      'implicit' => undef,
                                                                                                      'argcode' => undef,
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 148
+                                                                                                     'line' => 154
                                                                                                    }, 'Parse::RecDescent::Subrule' )
                                                                                           ],
                                                                                'line' => undef
@@ -9856,16 +9868,16 @@ package Petal::CodePerl::Parser; sub new { my $self = bless( {
                                                                                                      'implicit' => undef,
                                                                                                      'argcode' => undef,
                                                                                                      'lookahead' => 0,
-                                                                                                     'line' => 148
+                                                                                                     'line' => 154
                                                                                                    }, 'Parse::RecDescent::Subrule' )
                                                                                           ],
-                                                                               'line' => 148
+                                                                               'line' => 154
                                                                              }, 'Parse::RecDescent::Production' )
                                                                     ],
                                                          'name' => 'string_piece',
                                                          'vars' => '',
                                                          'changed' => 0,
-                                                         'line' => 147
+                                                         'line' => 153
                                                        }, 'Parse::RecDescent::Rule' )
                             }
                }, 'Parse::RecDescent' );

@@ -3,6 +3,8 @@ use warnings;
 
 package Petal::CodePerl::CodeGenerator;
 
+BEGIN{ print "fergal - ".join("\n", @INC)."\n";};
+
 use Petal::CodeGenerator;
 our @ISA = qw( Petal::CodeGenerator );
 

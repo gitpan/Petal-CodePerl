@@ -5,3 +5,8 @@ Code::Perl for that
 
 * make an env variable to autoload Petal::CodePerl?
 
+* optimise alternate for case of 1 expr
+
+* think about nothing
+
+* fix warnings stuff
