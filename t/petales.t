@@ -1,5 +1,4 @@
 use strict;
-
 use warnings;
 
 use Test::More 'no_plan';
@@ -7,12 +6,20 @@ use Test::More 'no_plan';
 use lib 't';
 
 use Test::Deep;
-
-$SIG{__DIE__} = $SIG{__WARN__} = \&Carp::confess;
+use Test::NoWarnings;
+use Data::Dumper qw(Dumper);
 
 use Code::Perl::Expr qw( :easy );
 use Petal::CodePerl::Expr qw( :easy );
 use Petal::CodePerl::Compiler;
+
+$Petal::Hash::MODIFIERS{"oldstyle:"} = 1;
+$Petal::Hash::MODIFIERS{"newstyle:"} = "NewStyle";
+
+if (%Petal::Hash::MODIFIERS)
+{
+}
+
 
 our $env;
 
@@ -105,6 +112,20 @@ my @tests = (
 		['string', "string:hello", append(string("hello"))],
 	],
 	[
+		'mod_expr',
+		['modifier revert', "oldstyle:hello", callm($root, "get", "structure oldstyle:hello")],
+		[
+			'modifier compile',
+			"newstyle:hello",
+			callm(
+				scal('Petal::Hash::MODIFIERS{"newstyle:"}'),
+				"process_value",
+				$root,
+				alternate(derefh($root, "hello")),
+			),
+		],
+	],
+	[
 		'only_expr',
 		[
 			'alternate',
@@ -139,6 +160,22 @@ my @tests = (
 	]
 );
 
+my @mod_tests = (
+	[
+		'mod_expr',
+		[
+			'modifier inline',
+			"newstyle:hello",
+			perlsprintf("%s->{%s}", $root, alternate(derefh($root, "hello"))),
+		],
+	]
+);
+
+$Petal::CodePerl::InlineMod = 0;
+do_tests(@tests);
+$Petal::CodePerl::InlineMod = 1;
+do_tests(@mod_tests);
+
 sub empty
 {
 	return 0;
@@ -159,16 +196,47 @@ sub testmethod
 	return "$pkg, $hash->{$key}";
 }
 
-foreach my $set (@tests)
+sub do_tests
 {
-	my ($rule, @rule_tests) = @$set;
-
-	foreach my $test (@rule_tests)
+	foreach my $set (@_)
 	{
-		my ($name, $expr, $exp_comp) = @$test;
+		my ($rule, @rule_tests) = @$set;
 
-		my $comp = Petal::CodePerl::Compiler->compileRule($rule, $expr);
+		foreach my $test (@rule_tests)
+		{
+			my ($name, $expr, $exp_comp) = @$test;
 
-		cmp_deeply($comp, $exp_comp, "$rule - $name");
+			my $comp = Petal::CodePerl::Compiler->compileRule($rule, $expr);
+
+			cmp_deeply($comp, $exp_comp, "$rule - $name") || diag Dumper($comp);
+		}
 	}
 }
+
+package NewStyle;
+
+sub process_value
+{
+	my $class = shift;
+	my $hash = shift;
+	my $value = shift;
+
+	return length($value);
+}
+
+sub inline
+{
+	my $self = shift;
+
+	my $hash_expr = shift;
+	my $expr = shift;
+
+	my $perlf = <<'EOM';
+%s->{%s}
+EOM
+
+	chomp($perlf);
+
+	return Petal::CodePerl::Expr::perlsprintf($perlf, $root, $expr);
+}
+

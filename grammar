@@ -10,7 +10,7 @@ q{
 
 	# a qualified expression, that is it begins with a type:
 	qual_expr: path_expr | not_expr | string_expr | exists_expr |
-		perl_expr | mod_expr_revert
+		perl_expr | mod_expr
 
 		path_expr: "path:" <commit> single_path { $item{path} }
 
@@ -25,13 +25,39 @@ q{
 
 		perl_expr: "perl:" <commit> <perl_codeblock>  { Code::Perl::Expr::perl($item[2]) }
 
-		# if we hit a modifier, just revert back to using Petal's hash
+		mod_expr: mod_expr_compile | mod_expr_revert
+
+		# a modifier that know's about compilation
+		mod_expr_compile: mod_name /\s*/ ':' expr {
+
+			my $name = $item{mod_name};
+			my $expr = $item{expr};
+			my $mod = $Petal::Hash::MODIFIERS{"$name:"} || die "Modifier '$name' does not exists";
+
+			my $compiled;
+			if (UNIVERSAL::can($mod, "inline") and $Petal::CodePerl::InlineMod)
+			{
+				$compiled =	$mod->inline($Petal::CodePerl::Compiler::root, $expr);
+			}
+			elsif (UNIVERSAL::can($mod, "process_value"))
+			{
+				$compiled =	Code::Perl::Expr::callm(
+					Code::Perl::Expr::scal("Petal::Hash::MODIFIERS{\"$name:\"}"), # this is a bit naughty
+					"process_value",
+					$Petal::CodePerl::Compiler::root,
+					$item{expr}
+				);
+			}
+			$compiled;
+		}
+
+		# an old style modifier that doesn't know about compilation
 		mod_expr_revert: mod_name /\s*/ ':' /.*/ {
 
 			# make sure Petal doesn't escape it because we will
 			my $key = "structure ".join("", @item[1, 2, 3, 4]);
 
-			Code::Perl::Expr::callmethod(
+			Code::Perl::Expr::callm(
 				$Petal::CodePerl::Compiler::root,
 				"get",
 				$key

@@ -1,1 +1,7 @@
 * write more tests for DerefTAL
+
+* not use scal for hash access in mod_expr_compile, need to update
+Code::Perl for that
+
+* make an env variable to autoload Petal::CodePerl?
+

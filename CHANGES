@@ -1,3 +1,16 @@
+0.04
+
+added support for compiled modifiers
+
+fixed a problem that occurred in taint mode if you didn't load Code::Perl
+
+Added GrammarLoader, now if the CODEPERL_DEV env variable is true, the
+grammar will be recompiled every time, useful if you're changing the grammar
+
+added use warnings and Test::NoWarnings everywhere
+
+added bin/ with compile and buildparser
+
 0.03
 
 Moved the CPT modifications into Petal::CodePerl otherwise they're not done

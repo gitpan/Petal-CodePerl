@@ -16,9 +16,10 @@ WriteMakefile(
 	VERSION_FROM => './lib/Petal/CodePerl.pm',
 	INSTALLDIRS => 'perl',
 	PREREQ_PM => {
-		'Scalar::Util' => 0,
+		'Scalar::Util' => 1.09,
 		'Code::Perl' => '0.01',
 		'Test::Deep' => '0.02',
+		'Test::NoWarnings' => '0.03',
 		'Parse::RecDescent' => '0.02',
 		'Petal' => '0.95',
 	},

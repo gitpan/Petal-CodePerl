@@ -1,4 +1,5 @@
 use strict;
+use warnings;
 
 package Petal::CodePerl::Expr::PathExists;
 

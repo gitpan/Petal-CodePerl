@@ -6,6 +6,8 @@ package Petal::CodePerl::CodeGenerator;
 use Petal::CodeGenerator;
 our @ISA = qw( Petal::CodeGenerator );
 
+# bring in the base in case we were loaded independently
+use Petal::CodePerl;
 use Petal::CodePerl::Compiler;
 
 use Code::Perl::Expr qw( scal );

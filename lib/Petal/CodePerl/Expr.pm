@@ -1,4 +1,5 @@
 use strict;
+use warnings;
 
 package Petal::CodePerl::Expr;
 
@@ -8,9 +9,10 @@ use base 'Exporter';
 use Petal::CodePerl::Expr::DerefTAL;
 use Petal::CodePerl::Expr::PathExists;
 use Petal::CodePerl::Expr::Alternate;
+use Petal::CodePerl::Expr::PerlSprintf;
 
 our %EXPORT_TAGS = (
-	easy => [qw( dereft pathexists alternate )],
+	easy => [qw( dereft pathexists alternate perlsprintf )],
 );
 
 our @EXPORT_OK = @{$EXPORT_TAGS{"easy"}};
@@ -101,6 +103,45 @@ sub dereft
 		Ref => $ref,
 		Key => $key,
 		Strict => $strict,
+	);
+}
+
+=head2 PerlSprintf
+
+  $class->new(Perl => $perl, Params => \@params);
+
+  perlsprintf($perl, @params);
+
+$string - an string of Perl code
+@params - an array of exprs to be place into the string
+
+B<This is a quick hack to allow me to get compiled modifiers working,
+hopefully it will go away soon>
+
+When PerlSprintf is producing Perl code, it will use Perl's sprintf function
+to insert the expressions in @params into the string in $string. You should
+put a %s in $string to mark where you want the expressions in @params to be
+placed. The expressions will be wrapped in () to avoid precedence problems.
+Because it uses Perl's sprintf function you must B<be careful> if there is
+a "%" in your Perl, you have to change any "%" to "%%".
+
+
+  perlsprintf('$array[%s].$hash->{%s}', scal("a"), string("harry"));
+
+will give perl like
+
+	$array[($a]).$hash->{"harray"}
+
+=cut
+
+sub perlsprintf
+{
+	my $perl = shift;
+	my @params = @_;
+
+	return Petal::CodePerl::Expr::PerlSprintf->new(
+		Perl => $perl,
+		Params => \@params,
 	);
 }
 

@@ -1,13 +1,12 @@
 use strict;
-
 use warnings;
 
 use Test::More 'no_plan';
+use Test::NoWarnings;
 
 use lib 't';
 use Code::Perl::Test::Expr;
 
-$SIG{__DIE__} = $SIG{__WARN__} = \&Carp::confess;
 
 use Code::Perl::Expr qw( :easy );
 use Petal::CodePerl::Expr qw( :easy );
@@ -32,6 +31,13 @@ my @tests = (
 		"eeny",
 		q{do{my $v;for (1){eval{$v = die}; last unless $@;$v = "eeny"} $v}}
 	],
+	[
+		'perlsprintf',
+		["string1", "string2"],
+		perlsprintf('%s->[%s].%s->[%s]."%%"', scal("main::env"), number(0), scal("main::env"), number(1)),
+		"string1string2%",
+		q{($main::env)->[(0)].($main::env)->[(1)]."%"},
+	]
 );
 
 Code::Perl::Test::Expr::test_exprs(@tests);
